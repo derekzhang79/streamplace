@@ -7,17 +7,16 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
-  "chromium-args": "--enable-webgl --ignore-gpu-blacklist",
+  "chromium-args": "--enable-experimental-web-platform-features --enable-webgl --ignore-gpu-blacklist --enable-webgl-image-chromium",
   "window": {
     "title": "WebGL example",
     "width": 1920,
     "height": 1080,
     "min_width": 1920,
     "min_height": 1080,
-    "fullscreen": false,
-    "resizable": false,
-    "toolbar": false,
-    "frame": false
+    "resizable": true,
+    "toolbar": true,
+    "frame": true
   },
   "license": "Apache-2.0"
 }

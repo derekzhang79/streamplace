@@ -26,6 +26,7 @@ var videoElement;
 // Called when the canvas is created to get the ball rolling.
 //
 function start() {
+  debugger;
   canvas = document.getElementById("glcanvas");
 
   videoElement = document.getElementById("video");
@@ -57,7 +58,8 @@ function start() {
     // Start listening for the canplaythrough event, so we don't
     // start playing the video until we can do so without stuttering
 
-    videoElement.addEventListener("canplaythrough", startVideo, true);
+    // videoElement.addEventListener("canplaythrough", startVideo, true);
+    startVideo(true);
 
     // Start listening for the ended event, so we can stop the
     // animation when the video is finished playing.
@@ -76,7 +78,7 @@ function initWebGL() {
   gl = null;
 
   try {
-    gl = canvas.getContext("experimental-webgl");
+    gl = canvas.getContext("experimental-webgl", {preserveDrawingBuffer: true});
   }
   catch(e) {
   }
@@ -300,7 +302,33 @@ function updateTexture() {
 function startVideo() {
   videoElement.play();
   videoElement.muted = true;
-  intervalID = setInterval(drawScene, 15);
+  let socket;
+  let shouldWrite = true;
+  var draw = function() {
+    window.setTimeout(function() {
+      drawScene();
+      if (socket) {
+        shouldWrite = false;
+        var pixels = new Uint8Array(gl.drawingBufferWidth * gl.drawingBufferHeight * 4);
+        gl.readPixels(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight, gl.RGBA, gl.UNSIGNED_BYTE, pixels);
+        socket.write(Buffer.from(pixels), null, function() {
+          shouldWrite = true;
+        });
+        draw();
+      }
+      else {
+        draw();
+      }
+    }, 30);
+  };
+  draw();
+  var net = require("net");
+  var server = net.createServer();
+  server.listen("output.sock");
+  server.on("connection", function(s) {
+    console.log("conn", s);
+    socket = s;
+  });
 }
 
 //
