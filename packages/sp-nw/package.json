@@ -7,7 +7,7 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
-  "chromium-args": "--enable-experimental-web-platform-features --enable-webgl --ignore-gpu-blacklist --enable-webgl-image-chromium",
+  "chromium-args": "--enable-experimental-web-platform-features --enable-webgl --ignore-gpu-blacklist --enable-webgl-image-chromium --enable-logging=stderr",
   "window": {
     "title": "WebGL example",
     "width": 1920,

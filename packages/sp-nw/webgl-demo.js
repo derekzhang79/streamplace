@@ -302,33 +302,15 @@ function updateTexture() {
 function startVideo() {
   videoElement.play();
   videoElement.muted = true;
-  let socket;
-  let shouldWrite = true;
-  var draw = function() {
-    window.setTimeout(function() {
-      drawScene();
-      if (socket) {
-        shouldWrite = false;
-        var pixels = new Uint8Array(gl.drawingBufferWidth * gl.drawingBufferHeight * 4);
-        gl.readPixels(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight, gl.RGBA, gl.UNSIGNED_BYTE, pixels);
-        socket.write(Buffer.from(pixels), null, function() {
-          shouldWrite = true;
-        });
-        draw();
-      }
-      else {
-        draw();
-      }
-    }, 30);
-  };
+  console.log("startvideo called")
+  var myWorker = new Worker('worker.js');
+  setInterval(function() {
+    drawScene();
+    var pixels = new Uint8Array(gl.drawingBufferWidth * gl.drawingBufferHeight * 4);
+    gl.readPixels(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight, gl.RGBA, gl.UNSIGNED_BYTE, pixels);
+    myWorker.postMessage(pixels);
+  }, 1000/30);
   draw();
-  var net = require("net");
-  var server = net.createServer();
-  server.listen("output.sock");
-  server.on("connection", function(s) {
-    console.log("conn", s);
-    socket = s;
-  });
 }
 
 //
