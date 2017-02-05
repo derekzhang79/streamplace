@@ -54,7 +54,7 @@ const pollForElement = function(document, selector) {
 nw.Window.open(process.env.URL, windowOptions, function(new_win) {
   // And listen to new window's focus event
   const document = new_win.window.document;
-  const worker = new Worker("worker.js");
+  const worker = new Worker("dist/worker.js");
   new_win.on("close", function() {
     process.exit(0);
   });
@@ -63,7 +63,15 @@ nw.Window.open(process.env.URL, windowOptions, function(new_win) {
     const start = Date.now();
     pollForElement(document, env.SELECTOR)
     .then((elem) => {
-      console.log(`Found ${elem} in ${Date.now() - start}ms`);
+      const gl = elem.getContext("experimental-webgl", {preserveDrawingBuffer: true});
+      const run = function() {
+        // This works much better than setInterval for whatever reason.
+        setTimeout(run, 1000/30);
+        const pixels = new Uint8Array(gl.drawingBufferWidth * gl.drawingBufferHeight * 4);
+        gl.readPixels(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight, gl.RGBA, gl.UNSIGNED_BYTE, pixels);
+        worker.postMessage(pixels);
+      };
+      run();
     })
     .catch((err) => {
       console.error(err);
