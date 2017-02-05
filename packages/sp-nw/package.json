@@ -2,21 +2,24 @@
   "name": "sp-nw",
   "version": "1.0.0",
   "description": "",
-  "main": "index.html",
+  "main": "dist/sp-compositor.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "run/dev.sh"
   },
   "author": "",
   "chromium-args": "--no-sandbox --disable-gpu-sandbox --enable-webgl --ignore-gpu-blacklist --enable-logging=stderr",
   "window": {
-    "title": "WebGL example",
+    "title": "Streamplace Compositor",
     "width": 1920,
     "height": 1080,
     "min_width": 1920,
     "min_height": 1080,
     "resizable": true,
-    "toolbar": true,
     "frame": true
   },
-  "license": "Apache-2.0"
+  "license": "Apache-2.0",
+  "devDependencies": {
+    "babel-preset-streamplace": "0.0.1"
+  }
 }
